@@ -31,6 +31,23 @@ def test_add_album_to_repository(web_client, db_connection):
     assert response.status_code == 200
     assert response.data.decode('utf-8') == "Album(1, Doolittle, 1989, 1)\nAlbum(2, Surfer Rosa, 1988, 1)\nAlbum(3, Waterloo, 1974, 2)\nAlbum(4, Super Trouper, 1980, 2)\nAlbum(5, Bossanova, 1990, 1)\nAlbum(6, Lover, 2019, 3)\nAlbum(7, Folklore, 2020, 3)\nAlbum(8, I Put a Spell on You, 1965, 4)\nAlbum(9, Baltimore, 1978, 4)\nAlbum(10, Here Comes the Sun, 1971, 4)\nAlbum(11, Fodder on My Wings, 1982, 4)\nAlbum(12, Ring Ring, 1973, 2)\nAlbum(13, Voyage, 2022, 2)"
     
+def test_get_artists(web_client, db_connection):
+    db_connection.seed('seeds/music_web_library.sql')
+    response = web_client.get('/artists')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == "Pixies, ABBA, Taylor Swift, Nina Simone"
+
+def test_add_new_artist_is_in_artists(web_client, db_connection):
+    db_connection.seed('seeds/music_web_library.sql')
+    response = web_client.post('/artists', data = {
+        'name':'Wild nothing',
+        'genre':'Indie'
+        })
+    assert response.status_code == 200
+    
+    response = web_client.get('/artists')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == "Pixies, ABBA, Taylor Swift, Nina Simone, Wild nothing"
 
 
     
